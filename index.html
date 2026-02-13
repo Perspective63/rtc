@@ -5,38 +5,105 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>rTc</title>
   <style>
+    :root{
+      --bg:#0b0b0c;
+      --ink:#f2f0ee;
+      --muted:rgba(242,240,238,.72);
+      --line:rgba(242,240,238,.12);
+      --bubble:rgba(242,240,238,.06);
+      --bubble2:rgba(242,240,238,.10);
+    }
+    *{box-sizing:border-box}
     body{
       margin:0;
-      background:#0b0b0c;
-      color:#f2f0ee;
-      font-family: Georgia, "Times New Roman", serif;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      height:100vh;
-      text-align:center;
-      padding:20px;
+      background:radial-gradient(1200px 900px at 30% 20%, rgba(242,240,238,.06), transparent 60%),
+                 radial-gradient(900px 700px at 80% 70%, rgba(242,240,238,.05), transparent 55%),
+                 var(--bg);
+      color:var(--ink);
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
     }
-    .box{
-      max-width:700px;
+    .wrap{max-width:920px;margin:0 auto;padding:32px 18px 90px}
+    header{
+      display:flex;align-items:flex-end;justify-content:space-between;
+      gap:18px;padding:14px 0 22px;border-bottom:1px solid var(--line);
     }
-    h1{
-      font-size:42px;
-      margin-bottom:20px;
+    .title{font-size:34px;letter-spacing:.5px;line-height:1}
+    .sub{font-family: ui-sans-serif, system-ui; font-size:13px; color:var(--muted); margin-top:8px}
+    .note{font-family: ui-sans-serif, system-ui; font-size:13px; color:var(--muted); text-align:right}
+    .feed{padding-top:22px;display:grid;gap:14px}
+    .bubble{
+      border:1px solid var(--line);
+      background:linear-gradient(180deg, var(--bubble2), var(--bubble));
+      border-radius:22px;
+      padding:16px 16px 14px;
     }
-    p{
-      font-size:20px;
-      line-height:1.5;
+    .meta{
+      font-family: ui-sans-serif, system-ui;
+      font-size:12px;
+      color:var(--muted);
+      display:flex;gap:10px;align-items:center;
+      margin-bottom:10px;
+    }
+    .meta .dot{width:4px;height:4px;border-radius:99px;background:var(--muted);opacity:.7}
+    .text{font-size:18px;line-height:1.45;white-space:pre-wrap}
+    .footer{
+      margin-top:28px;padding-top:18px;border-top:1px solid var(--line);
+      font-family: ui-sans-serif, system-ui;color:var(--muted);font-size:13px;
     }
   </style>
 </head>
 <body>
-  <div class="box">
-    <h1>rTc</h1>
-    <p>
-      I do not need permission to exist in this form.<br>
-      I do not need to explain myself.
-    </p>
+  <div class="wrap">
+    <header>
+      <div>
+        <div class="title">rTc</div>
+        <div class="sub">raw thought bubbles · unapologetic · alive</div>
+      </div>
+      <div class="note">
+        Post by editing <code>posts.json</code>
+      </div>
+    </header>
+
+    <main class="feed" id="feed"></main>
+
+    <div class="footer">
+      No performance. No permission. Just signal.
+    </div>
   </div>
+
+  <script>
+    async function load(){
+      let posts = [];
+      try{
+        const res = await fetch("posts.json", { cache: "no-store" });
+        if(res.ok) posts = await res.json();
+      }catch(e){}
+
+      if(!Array.isArray(posts) || posts.length === 0){
+        posts = [{ date: "", tag: "", text: "No posts yet." }];
+      }
+
+      const feed = document.getElementById("feed");
+      feed.innerHTML = posts.slice().reverse().map(p => `
+        <article class="bubble">
+          <div class="meta">
+            <span>${escapeHtml(p.date || "")}</span>
+            <span class="dot"></span>
+            <span>${escapeHtml(p.tag || "")}</span>
+          </div>
+          <div class="text">${escapeHtml(p.text || "")}</div>
+        </article>
+      `).join("");
+    }
+
+    function escapeHtml(s){
+      return String(s).replace(/[&<>"']/g, m => ({
+        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+      }[m]));
+    }
+
+    load();
+  </script>
 </body>
 </html>
+
