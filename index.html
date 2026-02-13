@@ -117,7 +117,7 @@
     /* rTc logo */
 
     .scale{
-      width:110px;
+      width:112px;
       height:52px;
       opacity:.95;
     }
@@ -135,13 +135,13 @@
       opacity:.85;
     }
 
+    /* Make r and c smaller than T */
     #T{ font-size:72px; }
     #panL, #panR{
-      font-size:58px;
+      font-size:44px;     /* smaller */
       font-weight:600;
       opacity:.92;
     }
-
   </style>
 </head>
 
@@ -153,7 +153,7 @@
 
     <div class="brand">
 
-      <svg class="scale" viewBox="0 0 260 90" fill="none">
+      <svg class="scale" viewBox="0 0 260 90" fill="none" aria-label="rTc balance mark">
 
         <!-- subtle beam -->
         <line x1="85" y1="30" x2="175" y2="30" />
@@ -187,37 +187,29 @@
 </div>
 
 <script>
-
-  /* Calm balance motion */
+  /* Slow oscillation only (no mouse). More visible but still calm. */
 
   const panL = document.getElementById("panL");
   const panR = document.getElementById("panR");
 
-  let target = 0;
-  let current = 0;
-
-  window.addEventListener("mousemove", (e) => {
-    const x = (e.clientX / window.innerWidth) * 2 - 1;
-    target = x;
-  });
+  // Tunables:
+  const amplitudePx = 14;   // movement size (increase for more)
+  const periodMs    = 3600; // slower = bigger number (e.g. 5000)
 
   function animate(){
-    const drift = Math.sin(Date.now() / 2400) * 0.15;
-    const aim = (target * 0.6) + drift;
-    current += (aim - current) * 0.04;
-
-    const dy = current * 12;
+    const t = Date.now();
+    const phase = (t % periodMs) / periodMs;          // 0..1
+    const wave  = Math.sin(phase * Math.PI * 2);      // -1..1
+    const dy = wave * amplitudePx;
 
     if(panL && panR){
       panL.setAttribute("transform", `translate(0 ${-dy})`);
       panR.setAttribute("transform", `translate(0 ${dy})`);
     }
-
     requestAnimationFrame(animate);
   }
 
   animate();
-
 
   /* Load posts */
 
@@ -236,17 +228,22 @@
     feed.innerHTML = posts.slice().reverse().map(p => `
       <article class="bubble">
         <div class="meta">
-          <span>${p.date || ""}</span>
+          <span>${escapeHtml(p.date || "")}</span>
           <span class="dot"></span>
-          <span>${p.tag || ""}</span>
+          <span>${escapeHtml(p.tag || "")}</span>
         </div>
-        <div class="text">${p.text || ""}</div>
+        <div class="text">${escapeHtml(p.text || "")}</div>
       </article>
     `).join("");
   }
 
-  load();
+  function escapeHtml(s){
+    return String(s).replace(/[&<>"']/g, m => ({
+      "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+    }[m]));
+  }
 
+  load();
 </script>
 
 </body>
