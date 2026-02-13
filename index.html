@@ -4,6 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>rTc</title>
+
   <style>
     :root{
       --bg:#0b0b0c;
@@ -13,7 +14,9 @@
       --bubble:rgba(242,240,238,.06);
       --bubble2:rgba(242,240,238,.10);
     }
+
     *{box-sizing:border-box}
+
     body{
       margin:0;
       background:radial-gradient(1200px 900px at 30% 20%, rgba(242,240,238,.06), transparent 60%),
@@ -22,88 +25,203 @@
       color:var(--ink);
       font-family: ui-serif, Georgia, "Times New Roman", serif;
     }
-    .wrap{max-width:920px;margin:0 auto;padding:32px 18px 90px}
-    header{
-      display:flex;align-items:flex-end;justify-content:space-between;
-      gap:18px;padding:14px 0 22px;border-bottom:1px solid var(--line);
+
+    .wrap{
+      max-width:920px;
+      margin:0 auto;
+      padding:32px 18px 90px;
     }
-    .title{font-size:34px;letter-spacing:.5px;line-height:1}
-    .sub{font-family: ui-sans-serif, system-ui; font-size:13px; color:var(--muted); margin-top:8px}
-    .note{font-family: ui-sans-serif, system-ui; font-size:13px; color:var(--muted); text-align:right}
-    .feed{padding-top:22px;display:grid;gap:14px}
+
+    header{
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap:18px;
+      padding:14px 0 22px;
+      border-bottom:1px solid var(--line);
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:14px;
+    }
+
+    .title{
+      font-size:34px;
+      letter-spacing:.5px;
+      line-height:1;
+    }
+
+    .sub{
+      font-family: ui-sans-serif, system-ui;
+      font-size:13px;
+      color:var(--muted);
+      margin-top:8px;
+    }
+
+    .note{
+      font-family: ui-sans-serif, system-ui;
+      font-size:13px;
+      color:var(--muted);
+      text-align:right;
+    }
+
+    .feed{
+      padding-top:22px;
+      display:grid;
+      gap:14px;
+    }
+
     .bubble{
       border:1px solid var(--line);
       background:linear-gradient(180deg, var(--bubble2), var(--bubble));
       border-radius:22px;
       padding:16px 16px 14px;
     }
+
     .meta{
       font-family: ui-sans-serif, system-ui;
       font-size:12px;
       color:var(--muted);
-      display:flex;gap:10px;align-items:center;
+      display:flex;
+      gap:10px;
+      align-items:center;
       margin-bottom:10px;
     }
-    .meta .dot{width:4px;height:4px;border-radius:99px;background:var(--muted);opacity:.7}
-    .text{font-size:18px;line-height:1.45;white-space:pre-wrap}
+
+    .meta .dot{
+      width:4px;
+      height:4px;
+      border-radius:99px;
+      background:var(--muted);
+      opacity:.7;
+    }
+
+    .text{
+      font-size:18px;
+      line-height:1.45;
+      white-space:pre-wrap;
+    }
+
     .footer{
-      margin-top:28px;padding-top:18px;border-top:1px solid var(--line);
-      font-family: ui-sans-serif, system-ui;color:var(--muted);font-size:13px;
+      margin-top:28px;
+      padding-top:18px;
+      border-top:1px solid var(--line);
+      font-family: ui-sans-serif, system-ui;
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    .scale{
+      width:66px;
+      height:50px;
+      opacity:.92;
+    }
+
+    .scale path,
+    .scale line,
+    .scale circle{
+      stroke:var(--ink);
     }
   </style>
 </head>
+
 <body>
-  <div class="wrap">
-    <header>
+
+<div class="wrap">
+
+  <header>
+
+    <div class="brand">
+
+      <svg class="scale" viewBox="0 0 120 90" fill="none">
+        <line x1="60" y1="10" x2="60" y2="78" stroke-width="3"/>
+        <path d="M38 80 H82" stroke-width="3"/>
+        <circle cx="60" cy="10" r="4" stroke-width="3"/>
+
+        <g id="beam" transform="translate(60 26)">
+          <line x1="-42" y1="0" x2="42" y2="0" stroke-width="3"/>
+          <line x1="-28" y1="0" x2="-42" y2="24" stroke-width="2"/>
+          <line x1="28" y1="0" x2="42" y2="24" stroke-width="2"/>
+
+          <path d="M-58 58 C-50 44 -34 44 -26 58" stroke-width="2"/>
+          <line x1="-42" y1="24" x2="-42" y2="50" stroke-width="2"/>
+
+          <path d="M26 58 C34 44 50 44 58 58" stroke-width="2"/>
+          <line x1="42" y1="24" x2="42" y2="50" stroke-width="2"/>
+        </g>
+      </svg>
+
       <div>
         <div class="title">rTc</div>
         <div class="sub">raw thought bubbles · unapologetic · alive</div>
       </div>
-      <div class="note">
-        Post by editing <code>posts.json</code>
-      </div>
-    </header>
-
-    <main class="feed" id="feed"></main>
-
-    <div class="footer">
-      No performance. No permission. Just signal.
     </div>
+
+    <div class="note">
+      Post by editing <code>posts.json</code>
+    </div>
+
+  </header>
+
+  <main class="feed" id="feed"></main>
+
+  <div class="footer">
+    No performance. No permission. Just signal.
   </div>
 
-  <script>
-    async function load(){
-      let posts = [];
-      try{
-        const res = await fetch("posts.json", { cache: "no-store" });
-        if(res.ok) posts = await res.json();
-      }catch(e){}
+</div>
 
-      if(!Array.isArray(posts) || posts.length === 0){
-        posts = [{ date: "", tag: "", text: "No posts yet." }];
-      }
+<script>
 
-      const feed = document.getElementById("feed");
-      feed.innerHTML = posts.slice().reverse().map(p => `
-        <article class="bubble">
-          <div class="meta">
-            <span>${escapeHtml(p.date || "")}</span>
-            <span class="dot"></span>
-            <span>${escapeHtml(p.tag || "")}</span>
-          </div>
-          <div class="text">${escapeHtml(p.text || "")}</div>
-        </article>
-      `).join("");
+  const beam = document.getElementById("beam");
+  let target = 0;
+  let current = 0;
+
+  window.addEventListener("mousemove", (e) => {
+    const x = (e.clientX / window.innerWidth) * 2 - 1;
+    target = x * 7;
+  });
+
+  function animate(){
+    const drift = Math.sin(Date.now() / 1400) * 1.6;
+    current += ((target + drift) - current) * 0.05;
+    if(beam){
+      beam.setAttribute("transform", `translate(60 26) rotate(${current})`);
+    }
+    requestAnimationFrame(animate);
+  }
+
+  animate();
+
+  async function load(){
+    let posts = [];
+    try{
+      const res = await fetch("posts.json", { cache: "no-store" });
+      if(res.ok) posts = await res.json();
+    }catch(e){}
+
+    if(!Array.isArray(posts) || posts.length === 0){
+      posts = [{ date: "", tag: "", text: "No posts yet." }];
     }
 
-    function escapeHtml(s){
-      return String(s).replace(/[&<>"']/g, m => ({
-        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
-      }[m]));
-    }
+    const feed = document.getElementById("feed");
+    feed.innerHTML = posts.slice().reverse().map(p => `
+      <article class="bubble">
+        <div class="meta">
+          <span>${p.date || ""}</span>
+          <span class="dot"></span>
+          <span>${p.tag || ""}</span>
+        </div>
+        <div class="text">${p.text || ""}</div>
+      </article>
+    `).join("");
+  }
 
-    load();
-  </script>
+  load();
+
+</script>
+
 </body>
 </html>
-
