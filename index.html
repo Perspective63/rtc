@@ -19,9 +19,10 @@
 
     body{
       margin:0;
-      background:radial-gradient(1200px 900px at 30% 20%, rgba(242,240,238,.06), transparent 60%),
-                 radial-gradient(900px 700px at 80% 70%, rgba(242,240,238,.05), transparent 55%),
-                 var(--bg);
+      background:
+        radial-gradient(1200px 900px at 30% 20%, rgba(242,240,238,.06), transparent 60%),
+        radial-gradient(900px 700px at 80% 70%, rgba(242,240,238,.05), transparent 55%),
+        var(--bg);
       color:var(--ink);
       font-family: ui-serif, Georgia, "Times New Roman", serif;
     }
@@ -44,7 +45,7 @@
     .brand{
       display:flex;
       align-items:center;
-      gap:14px;
+      gap:16px;
     }
 
     .title{
@@ -113,17 +114,34 @@
       font-size:13px;
     }
 
+    /* rTc logo */
+
     .scale{
-      width:66px;
-      height:50px;
+      width:110px;
+      height:52px;
+      opacity:.95;
+    }
+
+    .scale text{
+      fill:var(--ink);
+      font-family: Georgia, "Times New Roman", serif;
+      font-weight:700;
+    }
+
+    .scale line{
+      stroke:var(--ink);
+      stroke-width:6;
+      stroke-linecap:round;
+      opacity:.85;
+    }
+
+    #T{ font-size:72px; }
+    #panL, #panR{
+      font-size:58px;
+      font-weight:600;
       opacity:.92;
     }
 
-    .scale path,
-    .scale line,
-    .scale circle{
-      stroke:var(--ink);
-    }
   </style>
 </head>
 
@@ -135,22 +153,17 @@
 
     <div class="brand">
 
-      <svg class="scale" viewBox="0 0 120 90" fill="none">
-        <line x1="60" y1="10" x2="60" y2="78" stroke-width="3"/>
-        <path d="M38 80 H82" stroke-width="3"/>
-        <circle cx="60" cy="10" r="4" stroke-width="3"/>
+      <svg class="scale" viewBox="0 0 260 90" fill="none">
 
-        <g id="beam" transform="translate(60 26)">
-          <line x1="-42" y1="0" x2="42" y2="0" stroke-width="3"/>
-          <line x1="-28" y1="0" x2="-42" y2="24" stroke-width="2"/>
-          <line x1="28" y1="0" x2="42" y2="24" stroke-width="2"/>
+        <!-- subtle beam -->
+        <line x1="85" y1="30" x2="175" y2="30" />
+        <line x1="130" y1="20" x2="130" y2="34" />
 
-          <path d="M-58 58 C-50 44 -34 44 -26 58" stroke-width="2"/>
-          <line x1="-42" y1="24" x2="-42" y2="50" stroke-width="2"/>
+        <!-- r, T, c -->
+        <text id="panL" x="70"  y="64" text-anchor="middle">r</text>
+        <text id="T"    x="130" y="64" text-anchor="middle">T</text>
+        <text id="panR" x="190" y="64" text-anchor="middle">c</text>
 
-          <path d="M26 58 C34 44 50 44 58 58" stroke-width="2"/>
-          <line x1="42" y1="24" x2="42" y2="50" stroke-width="2"/>
-        </g>
       </svg>
 
       <div>
@@ -175,25 +188,38 @@
 
 <script>
 
-  const beam = document.getElementById("beam");
+  /* Calm balance motion */
+
+  const panL = document.getElementById("panL");
+  const panR = document.getElementById("panR");
+
   let target = 0;
   let current = 0;
 
   window.addEventListener("mousemove", (e) => {
     const x = (e.clientX / window.innerWidth) * 2 - 1;
-    target = x * 7;
+    target = x;
   });
 
   function animate(){
-    const drift = Math.sin(Date.now() / 1400) * 1.6;
-    current += ((target + drift) - current) * 0.05;
-    if(beam){
-      beam.setAttribute("transform", `translate(60 26) rotate(${current})`);
+    const drift = Math.sin(Date.now() / 2400) * 0.15;
+    const aim = (target * 0.6) + drift;
+    current += (aim - current) * 0.04;
+
+    const dy = current * 12;
+
+    if(panL && panR){
+      panL.setAttribute("transform", `translate(0 ${-dy})`);
+      panR.setAttribute("transform", `translate(0 ${dy})`);
     }
+
     requestAnimationFrame(animate);
   }
 
   animate();
+
+
+  /* Load posts */
 
   async function load(){
     let posts = [];
@@ -224,4 +250,4 @@
 </script>
 
 </body>
-</html>
+</h
